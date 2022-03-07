@@ -12,6 +12,7 @@ server.bind("0.0.0.0:40000", grpc.ServerCredentials.createInsecure());
 server.addService(todoPackage.Todo.service, {
     "createTodo": createTodo,
     "readTodos": readTodos,
+    "readTodosStream": readTodosStream
 });
 
 server.start();
@@ -29,8 +30,12 @@ function createTodo(call, callback) {
     // console.log(call);
 }
 
+function readTodosStream(call, callback) {
+    todos.forEach(t => call.write(t))
+    call.end()
+}
+
 function readTodos(call, callback) {
-    // callback(null, todos) //we cannot send the whole array like this because it is expecting 
-    // an item of TodoItems
+    // expecting an item of TodoItems
     callback(null, { "items": todos})
 }
